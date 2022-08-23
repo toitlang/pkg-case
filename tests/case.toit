@@ -32,7 +32,8 @@ main:
   item "Foo" "FOO" "foo"
   item "Schloß" "SCHLOSS" "schloß"
   item "Søen så sær ud" "SØEN SÅ SÆR UD" "søen så sær ud"
-  item "Σαν σήμερα 15 Αυγούστου" "ΣΑΝ ΣΉΜΕΡΑ 15 ΑΥΓΟΎΣΤΟΥ" "σαν σήμερα 15 αυγούστου"
+  item "Σαν σήμερα 15 Αυγούστου" "ΣΑΝ ΣΉΜΕΡΑ 15 ΑΥΓΟΎΣΤΟΥ" "σαν σήμερα 15 αυγούστου"  // Today is August 15.
+  item "Доверяй, но проверяй." "ДОВЕРЯЙ, НО ПРОВЕРЯЙ." "доверяй, но проверяй."  // Trust, but verify.
   item_unchanged ""
   item_unchanged "."
   item_unchanged "\u2603"
