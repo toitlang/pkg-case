@@ -76,16 +76,53 @@ to_some_case_ converter/CaseConverter src/string -> string:
   flush_substring.call
   return b.bytes.to_string
 
-to_upper src/string -> string:
-  return to_some_case_ TO_UPPER_ src
+/**
+Returns an upper-case version of the $source string.
+If there are no lower-case characters in the source string,
+  the source string is returned.
+Understands Unicode, so it does correct case conversion for
+  those alphabets that have a concept of upper and lower case.
+Can convert one character to more than one character.  For example
+  the german double s, "ß", is converted to "SS".
+*/
+to_upper source/string -> string:
+  return to_some_case_ TO_UPPER_ source
 
-to_lower src/string -> string:
-  return to_some_case_ TO_LOWER_ src
+/**
+Returns a lower-case version of the $source string.
+If there are no upper-case characters in the source string,
+  the source string is returned.
+Understands Unicode, so it does correct case conversion for
+  those alphabets that have a concept of upper and lower case.
+Can convert one character to more than one character.
+*/
+to_lower source/string -> string:
+  return to_some_case_ TO_LOWER_ source
 
-reg_exp_equivalence_class rune/int -> List/*<int>*/:
+/**
+Given a Unicode code point (numeric character), returns a
+  list of other code points that are equivalent to it in a
+  case-insensitive comparison.
+Only returns single code points, not sequences.
+Compatible with ECMAScript 5 regular expression concepts of
+  case independence.
+Returns null for code points that are only equivalent with
+  themselves.
+*/
+reg_exp_equivalence_class rune/int -> List?/*<int>*/:
   return REG_EXP_EQUIVALENCE_CLASSES_.map rune
 
-reg_exp_canonicalize_ rune/int -> int:
+/**
+Given a Unicode code point (numeric character), returns a
+  canonical code point to which it is equivalent in a
+  case-insensitive comparison.
+Only handles single code points, not sequences, so for
+  example the German double s, "ß", is not equivalent
+  to the single "s" or the capital "S".
+Compatible with ECMAScript 5 regular expression concepts of
+  case independence.
+*/
+reg_exp_canonicalize rune/int -> int:
   answer := REG_EXP_CANONICALIZE_.map rune
   if answer == null: return rune  // Unchanged.
   return answer

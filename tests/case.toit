@@ -28,6 +28,11 @@ item_unchanged from/string -> none:
   item from from from
 
 main:
+  upper_lower_test
+  equivalence_test
+  equivalence_class_test
+
+upper_lower_test:
   item "foo" "FOO" "foo"
   item "Foo" "FOO" "foo"
   item "Schloß" "SCHLOSS" "schloß"
@@ -45,3 +50,33 @@ main:
   // That's Alpha-Iota in the upper case position, not AI.
   // See https://en.wikipedia.org/wiki/Iota_subscript.
   item "ᾳ" "ΑΙ" "ᾳ"
+
+equivalence_test:
+  expect_equals '!'
+      case.reg_exp_canonicalize '!'
+  expect_equals 'S'
+      case.reg_exp_canonicalize 's'
+  expect_equals 'S'
+      case.reg_exp_canonicalize 'S'
+  expect_equals 'Æ'
+      case.reg_exp_canonicalize 'æ'
+  expect_equals 'Æ'
+      case.reg_exp_canonicalize 'Æ'
+  expect_equals 'Σ'
+      case.reg_exp_canonicalize 'ς'
+  expect_equals 'Σ'
+      case.reg_exp_canonicalize 'σ'
+
+equivalence_class_test:
+  expect_equals null
+      case.reg_exp_equivalence_class '!'
+  expect_equals ['S', 's']
+      case.reg_exp_equivalence_class 's'
+  expect_equals ['S', 's']
+      case.reg_exp_equivalence_class 'S'
+  expect_equals ['Σ', 'ς', 'σ']
+      case.reg_exp_equivalence_class 'ς'
+  expect_equals ['Σ', 'ς', 'σ']
+      case.reg_exp_equivalence_class 'σ'
+  expect_equals ['Σ', 'ς', 'σ']
+      case.reg_exp_equivalence_class 'Σ'
