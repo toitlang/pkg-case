@@ -50,6 +50,10 @@ upper_lower_test:
   // That's Alpha-Iota in the upper case position, not AI.
   // See https://en.wikipedia.org/wiki/Iota_subscript.
   item "ᾳ" "ΑΙ" "ᾳ"
+  // The Lunate form of Sigma has case equivalents, but the double struck C,
+  // and the Celsius sign have no lower case equivalents.
+  item "CϹℂ℃" "CϹℂ℃" "cϲℂ℃"
+  item "cϲℂ℃" "CϹℂ℃" "cϲℂ℃"
 
 equivalence_test:
   expect_equals '!'
