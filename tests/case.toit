@@ -9,20 +9,20 @@ FIXES_ ::= ["", "a", "A", ".", "\u{10400}"]
 
 item from/string upper/string lower/string -> none:
   expect_equals
-    case.to_upper from
-    upper
+      case.to_upper from
+      upper
   expect_equals
-    case.to_lower from
-    lower
+      case.to_lower from
+      lower
 
   FIXES_.do: | prefix |
     FIXES_.do: | affix |
       expect_equals
-        case.to_upper "$prefix$from$affix"
-        "$(case.to_upper prefix)$upper$(case.to_upper affix)"
+          case.to_upper "$prefix$from$affix"
+          "$(case.to_upper prefix)$upper$(case.to_upper affix)"
       expect_equals
-        case.to_lower "$prefix$from$affix"
-        "$(case.to_lower prefix)$lower$(case.to_lower affix)"
+          case.to_lower "$prefix$from$affix"
+          "$(case.to_lower prefix)$lower$(case.to_lower affix)"
 
 item_unchanged from/string -> none:
   item from from from

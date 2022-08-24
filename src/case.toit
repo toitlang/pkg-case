@@ -68,7 +68,6 @@ to_some_case_ converter/CaseConverter src/string -> string:
       if dest == null:
         if substring_start == -1: substring_start = index
       else:
-        //print "Gave $code ($(%c code)), got $dest ($dest))"
         flush_substring.call
         b.write dest
     index++
@@ -128,7 +127,7 @@ reg_exp_canonicalize rune/int -> int:
   return answer
 
 abstract class CaseTable_:
-  pages_ / Map/*<int, List>*/ := Map
+  pages_ / Map/*<int, List>*/ := {:}
   last_page_number_ / int := -1
   last_page_map_ / List? := null
 
@@ -157,7 +156,7 @@ abstract class CaseConverter extends CaseTable_:
         continue.run_ false  // Stop now.
       else:
         if from >= min:
-          if page_list == null: page_list = List PAGE_SIZE_
+          if not page_list: page_list = List PAGE_SIZE_
           add_entry page_list from to append
         continue.run_ true  // Continue.
     // May be null, meaning none of the characters on this page are mapped to
@@ -168,8 +167,6 @@ abstract class StringCaseConverter extends CaseConverter:
   add_entry page_list/List from/int to/int append/bool -> none:
     to_string := string.from_rune to
     low_bits := from & PAGE_MASK_
-    //print "In add_entry, $from-$to low_bits=$low_bits $page_list"
-    //throw "foo"
     if append and page_list[low_bits] != null:
       // This is relatively rare, and the string never ends up larger than
       // 3 characters.
@@ -234,7 +231,7 @@ class RegExpEquivalenceClasses_ extends CaseTable_:
       // ASCII to non-ASCII.
       else:
         if from >= min and (to > LAST_ASCII_RUNE_ or from <= LAST_ASCII_RUNE_):
-          if page_list == null: page_list = List PAGE_SIZE_
+          if not page_list: page_list = List PAGE_SIZE_
           page_list[from & PAGE_MASK_] = chars_that_map_to_each_canonical.get to --init=(: [])
         continue.collect_canonicals true  // Continue.
 
@@ -286,8 +283,7 @@ class RegExpEquivalenceClasses_ extends CaseTable_:
 
 // These are bytecodes for the little interpreter below.  See the block
 // of comments at the top of this file and above the interpreter for
-// explanation.  Generated from the Unicode standard in 2014.  See
-// tools/generate_case_tables.dart'
+// explanation.  Generated from the Unicode standard in 2014.
 TO_UPPER_PROGRAM_ ::= #[
     0x01, 0xa1, 0x1a, 0x45, 0xba, 0x0e, 0xdc, 0x62, 0xaa, 0x16, 0x45, 0x4d,
     0x07, 0x45, 0x05, 0xf8, 0x6a, 0x18, 0x48, 0x01, 0xc9, 0x6a, 0x48, 0x48,
@@ -497,17 +493,14 @@ class Interpreter:
     right_reg := 0
     byte_codes_.size.repeat: 
       byte := byte_codes_[it]
-      //print "byte code $(%02x byte)"
       op_code := byte & OP_CODE_MASK_
       argument := (byte & ARGUMENT_MASK_) + (extend_reg << ARGUMENT_BITS_)
       if op_code == EXTEND_:
-        //print "EXTEND $argument"
         extend_reg = argument
       else:
         if op_code == EMIT_:
           if extend_reg == 0: extend_reg = 1
           increment := ((byte >> POST_INCREMENT_SHIFT_) & POST_INCREMENT_MASK_) + 1
-          //print "EMIT$((byte & EMIT_MASK_) == EMIT_R_ ? "R" : "L") $increment ($extend_reg times)"
           extend_reg.repeat: | i |
             if (byte & EMIT_MASK_) == EMIT_R_:
               pre_increment := (byte & EMIT_R_MASK_) - EMIT_R_BIAS_
@@ -516,15 +509,12 @@ class Interpreter:
             else:
               // EMIT_L_.
               offset := fixed_offsets_[byte & EMIT_L_MASK_]
-              //print "offset from $(byte & EMIT_L_MASK_) = $offset"
               if not map.call left_reg left_reg + offset: return
             left_reg += increment
         else:
           if op_code == ADD_L_:
-            //print "ADDL left_reg from $left_reg to $(left_reg + argument)"
             left_reg += argument
           else:
             // op_code == LOAD_R_.
-            //print "LOAD_R $argument"
             right_reg = argument
         extend_reg = 0
