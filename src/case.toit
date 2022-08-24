@@ -154,12 +154,12 @@ abstract class CaseConverter extends CaseTable_:
     page_list / List? := null
     run_: | from to append |
       if from > max:
-        false  // Stop now.
+        continue.run_ false  // Stop now.
       else:
         if from >= min:
           if page_list == null: page_list = List PAGE_SIZE_
           add_entry page_list from to append
-        true  // Continue.
+        continue.run_ true  // Continue.
     // May be null, meaning none of the characters on this page are mapped to
     // different characters.
     return page_list
@@ -229,14 +229,14 @@ class RegExpEquivalenceClasses_ extends CaseTable_:
 
     collect_canonicals := : | from to |
       if from > max:
-        false;  // Stop now.
+        continue.collect_canonicals false  // Stop now.
       // Due to a strange rule in 21.2.2.8.2 step 3g we ignore mappings from
       // ASCII to non-ASCII.
       else:
         if from >= min and (to > LAST_ASCII_RUNE_ or from <= LAST_ASCII_RUNE_):
           if page_list == null: page_list = List PAGE_SIZE_
           page_list[from & PAGE_MASK_] = chars_that_map_to_each_canonical.get to --init=(: [])
-        true  // Continue.
+        continue.collect_canonicals true  // Continue.
 
     // Get single character upper case mappings.
     (Interpreter TO_UPPER_PROGRAM_ true).interpret collect_canonicals
