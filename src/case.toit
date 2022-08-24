@@ -50,7 +50,7 @@ PAGE_SHIFT_ ::= 8
 PAGE_SIZE_  ::= 1 << PAGE_SHIFT_
 PAGE_MASK_  ::= PAGE_SIZE_ - 1
 
-to_some_case_ converter/CaseConverter src/string -> string:
+to_some_case_ converter/CaseConverter_ src/string -> string:
   if src == "": return src
 
   b := Buffer
@@ -141,7 +141,7 @@ abstract class CaseTable_:
       last_page_map_ = pages_[page]
     return last_page_map_ == null ? null : last_page_map_[rune & PAGE_MASK_]
 
-abstract class CaseConverter extends CaseTable_:
+abstract class CaseConverter_ extends CaseTable_:
   // f takes from/int to/int append/bool
   abstract run_ [f] -> none
 
@@ -163,7 +163,7 @@ abstract class CaseConverter extends CaseTable_:
     // different characters.
     return page_list
 
-abstract class StringCaseConverter extends CaseConverter:
+abstract class StringCaseConverter_ extends CaseConverter_:
   add_entry page_list/List from/int to/int append/bool -> none:
     to_string := string.from_rune to
     low_bits := from & PAGE_MASK_
@@ -177,34 +177,34 @@ abstract class StringCaseConverter extends CaseConverter:
 // Regular expression canonicalization uses the to-upper tables, but is specced
 // to only use the single character mappings.  We use char codes, not short
 // strings.
-class RegExpCanonicalizer_ extends CaseConverter:
+class RegExpCanonicalizer_ extends CaseConverter_:
   add_entry page_list/List from/int to/int append/bool -> none:
     low_bits := from & PAGE_MASK_
     page_list[low_bits] = to
 
   run_ [f] -> none:
-    interpreter := Interpreter TO_UPPER_PROGRAM_ true
+    interpreter := Interpreter_ TO_UPPER_PROGRAM_ true
     interpreter.interpret: | from to | f.call from to false  // Unused boolean argument.
 
 // to_upper_case maps from char codes to short strings (1-3 characters).
-class ToUpperConverter_ extends StringCaseConverter:
+class ToUpperConverter_ extends StringCaseConverter_:
   run_ [f] -> none:
     overwrite_map := : | from to | f.call from to false
     append_map := : | from to | f.call from to true
 
     // Single character upper case mappings.
-    (Interpreter TO_UPPER_PROGRAM_ true).interpret overwrite_map
+    (Interpreter_ TO_UPPER_PROGRAM_ true).interpret overwrite_map
     // First character of multi-character upper case mappings.
-    (Interpreter S1_PROGRAM_ true).interpret overwrite_map
+    (Interpreter_ S1_PROGRAM_ true).interpret overwrite_map
     // Second character of multi-character upper case mappings.
-    (Interpreter S2_PROGRAM_ true).interpret append_map
+    (Interpreter_ S2_PROGRAM_ true).interpret append_map
     // Third character of multi-character upper case mappings.
-    (Interpreter S3_PROGRAM_ true).interpret append_map
+    (Interpreter_ S3_PROGRAM_ true).interpret append_map
 
 // to_lower_case maps from char codes to one-character strings.
-class ToLowerConverter_ extends StringCaseConverter:
+class ToLowerConverter_ extends StringCaseConverter_:
   run_ [f] -> none:
-    (Interpreter TO_LOWER_PROGRAM_ false).interpret: | from to | f.call from to false
+    (Interpreter_ TO_LOWER_PROGRAM_ false).interpret: | from to | f.call from to false
 
 // The equivalence classes map from char codes to short lists of
 // equivalent char codes.
@@ -236,7 +236,7 @@ class RegExpEquivalenceClasses_ extends CaseTable_:
         continue.collect_canonicals true  // Continue.
 
     // Get single character upper case mappings.
-    (Interpreter TO_UPPER_PROGRAM_ true).interpret collect_canonicals
+    (Interpreter_ TO_UPPER_PROGRAM_ true).interpret collect_canonicals
 
     if page_list == null: return null
 
@@ -266,7 +266,7 @@ class RegExpEquivalenceClasses_ extends CaseTable_:
       // Always continue, we have to run through all the to_upper_case byte codes.
       true
 
-    (Interpreter TO_UPPER_PROGRAM_ true).interpret collect_sets
+    (Interpreter_ TO_UPPER_PROGRAM_ true).interpret collect_sets
 
     at_least_one_mapping := false
 
@@ -477,7 +477,7 @@ EMIT_R_BIAS_ ::= 2
 ARGUMENT_BITS_ ::= 6
 ARGUMENT_MASK_ ::= 0x3f
 
-class Interpreter:
+class Interpreter_:
   fixed_offsets_ / List
   byte_codes_ / ByteArray
 
