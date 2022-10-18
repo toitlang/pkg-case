@@ -55,6 +55,9 @@ upper_lower_test:
   // case equivalents.
   item "ḈÇCϹℂ℃" "ḈÇCϹℂ℃" "ḉçcϲℂ℃"
   item "ḉçcϲℂ℃" "ḈÇCϹℂ℃" "ḉçcϲℂ℃"
+  // The Deseret alphabet uses case and is in the 4-byte area of UTF-8 (code
+  // points above 0x10000).
+  item "𐐐𐐶𐐯𐑉𐑁𐐬𐑉" "𐐐𐐎𐐇𐐡𐐙𐐄𐐡" "𐐸𐐶𐐯𐑉𐑁𐐬𐑉"
 
 equivalence_test:
   expect_equals '!'
