@@ -190,7 +190,7 @@ class RegExpCanonicalizer_ extends CaseConverter_:
 class ToUpperConverter_ extends StringCaseConverter_:
   run_ [f] -> none:
     overwrite_map := : | from to | f.call from to false
-    append_map := : | from to | f.call from to true
+    append_map :=    : | from to | f.call from to true
 
     // Single character upper case mappings.
     (Interpreter_ TO_UPPER_PROGRAM_ true).interpret overwrite_map
@@ -445,12 +445,12 @@ COMMON_OFFSETS_ ::= #[1, 2, 8, 16, 26, 32, 48, 80]
 // EMIT_L_:       010nnmmm    Repeat (X == 0 ? 1 : X) times:
 //                              Emit(L, L + COMMON_OFFSETS_[m])
 //                              L += n+1
-//                              X = 0
+//                            X = 0
 // EMIT_R_:       011nnmmm    Repeat (X == 0 ? 1 : X) times:
 //                              R += m - bias
 //                              Emit(L, R)
 //                              L += n+1
-//                              X = 0
+//                            X = 0
 // ADD_L_         10nnnnnn    L += (X << 6) + n
 //                            X = 0
 // LOAD_R_        11nnnnnn    R = (X << 6) + n
