@@ -20,4 +20,4 @@ test: install-pkgs rebuild-cmake
 .PHONY: rebuild-cmake
 rebuild-cmake:
 	mkdir -p build
-	cmake -B build
+	cmake -B build -DCMAKE_BUILD_TYPE=fish
