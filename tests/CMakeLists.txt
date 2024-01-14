@@ -21,7 +21,7 @@ ProcessorCount(NUM_CPU)
 
 add_custom_target(
   check
-  COMMAND ${CMAKE_CTEST_COMMAND} -j${NUM_CPU} --output-on-failure -C fish
+  COMMAND ${CMAKE_CTEST_COMMAND} -j${NUM_CPU} --output-on-failure -C Release
   USES_TERMINAL
 )
 
